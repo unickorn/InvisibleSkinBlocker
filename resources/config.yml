@@ -1,0 +1,7 @@
+---
+# If the transparent pixel percentage in a skin is higher than this, player will be kicked.
+percentage: 75
+
+# The message to kick the player with.
+message: "Invisible skins are not allowed."
+...
