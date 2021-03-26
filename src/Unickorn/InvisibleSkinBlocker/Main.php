@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Unickorn\InvisibleSkinBlocker;
 
@@ -8,7 +9,6 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use function ord;
-use function round;
 use function strlen;
 
 class Main extends PluginBase implements Listener{
@@ -23,9 +23,10 @@ class Main extends PluginBase implements Listener{
 		64 * 64 * 4   => 64,
 		128 * 128 * 4 => 128
 	];
-
-	private int $percentage;
-	private string $message;
+	/** @var int */
+	private $percentage;
+	/** @var string */
+	private $message;
 
 	public function onEnable(): void{
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
@@ -34,25 +35,24 @@ class Main extends PluginBase implements Listener{
 	}
 
 	public function checkSkin(Player $player, ?string $skinData = null): void{
-		$skinData ??= $player->getSkin()->getSkinData();
+		if($skinData === null){
+			$skinData = $player->getSkin()->getSkinData();
+		}
 		$size = strlen($skinData);
 		$width = self::SKIN_WIDTH_MAP[$size];
 		$height = self::SKIN_HEIGHT_MAP[$size];
 		$pos = -1;
-		$empty = 0;
+		$pixelsNeeded = (int) ((100 - $this->percentage) / 100 * ($width * $height)); // visible pixels needed
 		for($y = 0; $y < $height; $y++){
 			for($x = 0; $x < $width; $x++){
-				$pos += 4;
-				if(ord($skinData[$pos]) !== 255){
-					$empty++;
+				if(ord($skinData[$pos += 4]) === 255){
+					if(--$pixelsNeeded === 0){
+						return;
+					}
 				}
 			}
 		}
-		$percentage = $empty / ($width * $height) * 100;
-		$this->getLogger()->debug($player->getName() . "'s skin is " . round($percentage, 2) . "% transparent");
-		if($percentage >= $this->percentage){
-			$player->kick($this->message, false);
-		}
+		$player->kick($this->message, false);
 	}
 
 	public function onJoin(PlayerJoinEvent $event): void{
