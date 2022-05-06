@@ -5,4 +5,5 @@ branches:
 projects:
   InvisibleSkinBlocker:
     path: ""
+    icon: "icon.png"
 ...
