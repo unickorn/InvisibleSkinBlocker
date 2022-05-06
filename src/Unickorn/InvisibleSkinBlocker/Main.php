@@ -6,7 +6,7 @@ namespace Unickorn\InvisibleSkinBlocker;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChangeSkinEvent;
 use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use function ord;
 use function strlen;
