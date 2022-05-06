@@ -1,7 +1,7 @@
 name: InvisibleSkinBlocker
 main: Unickorn\InvisibleSkinBlocker\Main
-version: 0.0.2
-api: 3.0.0
+version: 0.0.3
+api: 4.0.0
 author: Unickorn
 description: Block players with invisible skins from joining the server.
 website: https://github.com/Unickorn/InvisibleSkinBlocker
