@@ -8,6 +8,7 @@ use pocketmine\event\player\PlayerChangeSkinEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
+use pocketmine\scheduler\ClosureTask;
 use function ord;
 use function strlen;
 
@@ -34,6 +35,9 @@ class Main extends PluginBase implements Listener
 	}
 
 	public function checkSkin(Player $player, ?string $skinData = null) : void {
+		if(!$player->isOnline()){
+			return;
+		}
 		$skinData ??= $player->getSkin()->getSkinData();
 		$size = strlen($skinData);
 		$width = self::SKIN_WIDTH_MAP[$size];
@@ -53,7 +57,10 @@ class Main extends PluginBase implements Listener
 	}
 
 	public function onJoin(PlayerJoinEvent $event) : void {
-		$this->checkSkin($event->getPlayer());
+		$player = $event->getPlayer();
+		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(function() use ($player): void{
+			$this->checkSkin($player);
+		}), 1);
 	}
 
 	public function onChangeSkin(PlayerChangeSkinEvent $event) : void {
