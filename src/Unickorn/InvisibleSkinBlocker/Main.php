@@ -10,6 +10,7 @@ use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use function ord;
 use function strlen;
+use pocketmine\entity\Skin;
 
 class Main extends PluginBase implements Listener
 {
@@ -25,15 +26,13 @@ class Main extends PluginBase implements Listener
 	];
 
 	private int $percentage;
-	private string $message;
 
 	public function onEnable() : void {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		$this->percentage = $this->getConfig()->get("percentage", 75);
-		$this->message = $this->getConfig()->get("message", "Invisible skins are not allowed.");
 	}
 
-	public function checkSkin(Player $player, ?string $skinData = null) : void {
+	public function checkSkin(Player $player, ?string $skinData = null) : bool {
 		$skinData ??= $player->getSkin()->getSkinData();
 		$size = strlen($skinData);
 		$width = self::SKIN_WIDTH_MAP[$size];
@@ -44,19 +43,24 @@ class Main extends PluginBase implements Listener
 			for ($x = 0; $x < $width; $x++) {
 				if (ord($skinData[$pos += 4]) === 255) {
 					if (--$pixelsNeeded === 0) {
-						return;
+						return true;
 					}
 				}
 			}
 		}
-		$player->kick($this->message);
+		return false;
 	}
 
 	public function onJoin(PlayerJoinEvent $event) : void {
-		$this->checkSkin($event->getPlayer());
+		$player = $event->getPlayer();
+		if($this->checkSkin($event->getPlayer())){
+			$player->setSkin(new Skin("Standard_Custom", str_repeat(random_bytes(3) . "\xff", 4096)));
+		}
 	}
 
 	public function onChangeSkin(PlayerChangeSkinEvent $event) : void {
-		$this->checkSkin($event->getPlayer(), $event->getNewSkin()->getSkinData());
+		if($this->checkSkin($event->getPlayer(), $event->getNewSkin()->getSkinData())){
+			$event->cancel();
+		}
 	}
 }

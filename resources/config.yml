@@ -3,7 +3,4 @@
 # IMPORTANT: Keep in mind this is NOT for the visible parts of the skin, it is for the entire skin texture, which
 # normally already contains a good amount of empty pixels.
 percentage: 75
-
-# The message to kick the player with.
-message: "Invisible skins are not allowed."
 ...
