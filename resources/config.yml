@@ -4,6 +4,20 @@
 # normally already contains a good amount of empty pixels.
 percentage: 75
 
-# The message to kick the player with.
+# Options are "kick" and "block".
+# kick: Kicks the player if the skin is invisible.
+# block: Blocks the player from changing their skin in-game to an invisible one, and sets their skin to
+#  default_skin if they join with an invisible skin.
+behaviour: "kick"
+
+# Only used if behaviour is "block".
+# The player's skin will be set to the skin specified here if they join with an invisible skin.
+# If left empty, random bytes will be used.
+default-skin:
+  geometry: ""
+  texture: ""
+
+# If behaviour is "block", this is the message sent to the player.
+# If behaviour is "kick", this is the message shown to the player on the disconnection screen.
 message: "Invisible skins are not allowed."
 ...
