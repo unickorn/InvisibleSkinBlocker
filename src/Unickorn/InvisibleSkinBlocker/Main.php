@@ -40,7 +40,6 @@ class Main extends PluginBase implements Listener
 		$height = self::SKIN_HEIGHT_MAP[$size];
 		$pos = -1;
 		$pixelsNeeded = (int)((100 - $this->percentage) / 100 * ($width * $height)); // visible pixels needed
-
 		for ($y = 0; $y < $height; $y++) {
 			for ($x = 0; $x < $width; $x++) {
 				if (ord($skinData[$pos += 4]) === 255) {
@@ -54,7 +53,6 @@ class Main extends PluginBase implements Listener
 	}
 
 	public function onJoin(PlayerLoginEvent $event) : void {
-		var_dump($this->checkSkin($event->getPlayer()));
 		if($this->checkSkin($event->getPlayer())){
 			$event->setKickMessage($this->message);
 			$event->cancel();
