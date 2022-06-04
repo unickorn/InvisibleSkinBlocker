@@ -11,6 +11,10 @@ use pocketmine\plugin\PluginBase;
 use function ord;
 use function strlen;
 use pocketmine\entity\Skin;
+use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\network\mcpe\protocol\PlayerSkinPacket;
+use pocketmine\event\server\DataPacketSendEvent;
+use pocketmine\event\player\PlayerLoginEvent;
 
 class Main extends PluginBase implements Listener
 {
@@ -26,10 +30,12 @@ class Main extends PluginBase implements Listener
 	];
 
 	private int $percentage;
+	private string $message;
 
 	public function onEnable() : void {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		$this->percentage = $this->getConfig()->get("percentage", 75);
+		$this->message = $this->getConfig()->get("message", "Invisible skins are not allowed.");
 	}
 
 	public function checkSkin(Player $player, ?string $skinData = null) : bool {
@@ -51,10 +57,11 @@ class Main extends PluginBase implements Listener
 		return false;
 	}
 
-	public function onJoin(PlayerJoinEvent $event) : void {
+	public function onJoin(PlayerLoginEvent $event) : void {
 		$player = $event->getPlayer();
 		if($this->checkSkin($event->getPlayer())){
-			$player->setSkin(new Skin("Standard_Custom", str_repeat(random_bytes(3) . "\xff", 4096)));
+			$event->setKickMessage($this->message);
+			//$player->setSkin(new Skin("Standard_Custom", str_repeat(random_bytes(3) . "\xff", 4096)));
 		}
 	}
 
