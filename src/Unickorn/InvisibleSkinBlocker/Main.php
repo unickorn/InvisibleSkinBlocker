@@ -11,7 +11,6 @@ use pocketmine\plugin\PluginBase;
 use function ord;
 use function strlen;
 
-
 class Main extends PluginBase implements Listener
 {
 	public const SKIN_WIDTH_MAP = [
