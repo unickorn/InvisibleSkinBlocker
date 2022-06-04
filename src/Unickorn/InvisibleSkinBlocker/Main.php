@@ -10,6 +10,7 @@ use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use Ramsey\Uuid\Uuid;
+use function chr;
 use function ord;
 use function strlen;
 
@@ -29,7 +30,7 @@ class Main extends PluginBase implements Listener
 	private int $percentage;
 	private string $message;
 	private string $behaviour;
-	private ?string $defaultSkin = null;
+	private ?Skin $defaultSkin = null;
 
 	public function onEnable() : void {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
@@ -99,7 +100,7 @@ class Main extends PluginBase implements Listener
 		return new Skin(Uuid::uuid4()->toString(), $bytes, "", "geometry.humanoid.custom", "");
 	}
 
-	public function onJoin(PlayerLoginEvent $event) : void {
+	public function onLogin(PlayerLoginEvent $event) : void {
 		$player = $event->getPlayer();
 		if ($this->checkSkin($player)) {
 			if ($this->behaviour === "kick") {
