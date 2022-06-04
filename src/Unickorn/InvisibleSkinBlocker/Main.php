@@ -5,7 +5,7 @@ namespace Unickorn\InvisibleSkinBlocker;
 
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChangeSkinEvent;
-use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use function ord;
@@ -33,7 +33,7 @@ class Main extends PluginBase implements Listener
 		$this->message = $this->getConfig()->get("message", "Invisible skins are not allowed.");
 	}
 
-	public function checkSkin(Player $player, ?string $skinData = null) : void {
+	public function checkSkin(Player $player, ?string $skinData = null) : bool {
 		$skinData ??= $player->getSkin()->getSkinData();
 		$size = strlen($skinData);
 		$width = self::SKIN_WIDTH_MAP[$size];
@@ -44,19 +44,25 @@ class Main extends PluginBase implements Listener
 			for ($x = 0; $x < $width; $x++) {
 				if (ord($skinData[$pos += 4]) === 255) {
 					if (--$pixelsNeeded === 0) {
-						return;
+						return false;
 					}
 				}
 			}
 		}
-		$player->kick($this->message);
+		return true;
 	}
 
-	public function onJoin(PlayerJoinEvent $event) : void {
-		$this->checkSkin($event->getPlayer());
+	public function onJoin(PlayerLoginEvent $event) : void {
+		if($this->checkSkin($event->getPlayer())){
+			$event->setKickMessage($this->message);
+			$event->cancel();
+		}
 	}
 
 	public function onChangeSkin(PlayerChangeSkinEvent $event) : void {
-		$this->checkSkin($event->getPlayer(), $event->getNewSkin()->getSkinData());
+		$player = $event->getPlayer();
+		if($this->checkSkin($player, $event->getNewSkin()->getSkinData())){
+			$player->kick($this->message);
+		}
 	}
 }
