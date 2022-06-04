@@ -5,16 +5,12 @@ namespace Unickorn\InvisibleSkinBlocker;
 
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChangeSkinEvent;
-use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use function ord;
 use function strlen;
-use pocketmine\entity\Skin;
-use pocketmine\event\server\DataPacketReceiveEvent;
-use pocketmine\network\mcpe\protocol\PlayerSkinPacket;
-use pocketmine\event\server\DataPacketSendEvent;
-use pocketmine\event\player\PlayerLoginEvent;
+
 
 class Main extends PluginBase implements Listener
 {
