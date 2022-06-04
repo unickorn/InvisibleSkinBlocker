@@ -40,29 +40,31 @@ class Main extends PluginBase implements Listener
 		$height = self::SKIN_HEIGHT_MAP[$size];
 		$pos = -1;
 		$pixelsNeeded = (int)((100 - $this->percentage) / 100 * ($width * $height)); // visible pixels needed
+
 		for ($y = 0; $y < $height; $y++) {
 			for ($x = 0; $x < $width; $x++) {
 				if (ord($skinData[$pos += 4]) === 255) {
 					if (--$pixelsNeeded === 0) {
-						return true;
+						return false;
 					}
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 
 	public function onJoin(PlayerLoginEvent $event) : void {
-		$player = $event->getPlayer();
+		var_dump($this->checkSkin($event->getPlayer()));
 		if($this->checkSkin($event->getPlayer())){
 			$event->setKickMessage($this->message);
-			//$player->setSkin(new Skin("Standard_Custom", str_repeat(random_bytes(3) . "\xff", 4096)));
+			$event->cancel();
 		}
 	}
 
 	public function onChangeSkin(PlayerChangeSkinEvent $event) : void {
-		if($this->checkSkin($event->getPlayer(), $event->getNewSkin()->getSkinData())){
-			$event->cancel();
+		$player = $event->getPlayer();
+		if($this->checkSkin($player, $event->getNewSkin()->getSkinData())){
+			$player->kick($this->message);
 		}
 	}
 }
